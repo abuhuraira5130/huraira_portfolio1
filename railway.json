@@ -1,8 +1,6 @@
 {
   "build": {
-    "builder": "RAILPACK",
-    "runtime": "python:3.11",
-    "buildCommand": "python -m ensurepip && python -m pip install --upgrade pip && python -m pip install -r backend/requirements.txt && python backend/manage.py collectstatic --noinput"
+    "builder": "RAILPACK"
   },
   "deploy": {
     "startCommand": "cd backend && gunicorn config.wsgi --bind 0.0.0.0:$PORT --workers 3 --log-file -",

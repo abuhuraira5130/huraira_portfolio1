@@ -1,6 +1,17 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv, dotenv_values
+import os
+import dj_database_url  # Install if not: pip install dj-database-url
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+}
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,12 +87,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
+DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.mysql')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.mysql'),
         'NAME': os.getenv('DB_NAME', 'myproject1'),
-        'USER': os.getenv('DB_USER', 'myuser'),  # must be provided via env or .env
-        'PASSWORD': os.getenv('DB_PASSWORD', 'Abu@5130'),  # must be provided via env or .env
+        'USER': os.getenv('DB_USER', 'myuser'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'Abu@5130'),
         'HOST': os.getenv('DB_HOST', '127.0.0.1'),
         'PORT': int(os.getenv('DB_PORT', '3306')),
         'OPTIONS': {
@@ -90,6 +103,7 @@ DATABASES = {
         },
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -157,9 +171,3 @@ pymysql.install_as_MySQLdb()
 
 import sys
 
-DB_ENGINE = os.getenv('DB_ENGINE', 'mysql')
-if 'test' in sys.argv or DB_ENGINE == 'sqlite':
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3') if DB_ENGINE != 'test' else ':memory:',
-    }
